@@ -1,4 +1,4 @@
-;;; Copyright 2023, Jaidyn Ann <jadedctrl@posteo.at>
+ ;;; Copyright 2023, Jaidyn Ann <jadedctrl@posteo.at>
 ;;;
 ;;; This program is free software: you can redistribute it and/or
 ;;; modify it under the terms of the GNU Affero General Public License
@@ -19,6 +19,11 @@
 
 (in-package #:kaptchapelo)
 
+(defun random-string ()
+  "Create a random string consisting of at least 19 characters: Random numbers."
+  (apply #'str:concat
+         (mapcar (lambda (a) (format nil "~A" a))
+                 (loop for i from 0 upto 19  collect (random 16)))))
 
 (defun byte-array-to-hex-string (simple-array)
   "Given an array of bytes (integers), return an equivalent string in hex."
@@ -45,7 +50,7 @@
      (list "md5" (byte-array-to-hex-string captcha-text-file)
            "url" captcha-image-uri
            ;; I don’t know what Kocaptcha’s token does! :P
-           "token" "This_isnt_actually_used_lol"))))
+           "token" (random-string)))))
 
 
 (defun new-captcha-response (captcha-dir)
