@@ -28,45 +28,57 @@
                  collect (format nil "~2,'0X" byte)))))
 
 
-(defun new-captcha-json ()
+(defun random-file (directory &key (file-ext ""))
+  (alexandria:random-elt
+   (directory (str:concat (format nil "~A" directory)
+                          "/*"
+                          (if (not (str:emptyp file-ext))
+                              (str:concat "." file-ext)
+                              "")))))
+
+
+(defun new-captcha-json (captcha-image-uri captcha-text-file)
   "Return the kocaptcha-formed JSON to be returned for a new captcha request."
   (yason:with-output-to-string* ()
     (yason:encode-plist
-     '("md5" "e" "token" "This_isnt_actually_used_lol" "url" "/bird"))))
+     (list "md5" (byte-array-to-hex-string captcha-text-file)
+           "url" captcha-image-uri
+           "token" "This_isnt_actually_used_lol"))))
 
 
-(defun new-captcha-response ()
+(defun new-captcha-response (captcha-dir)
   "Create an HTTP response for use with Clack with a new captcha."
-  (list 201 '(:content-type "application/json")
-        (list (new-captcha-json))))
+  (let* ((captcha-txt-file (random-file captcha-dir :file-ext "txt"))
+         (captcha-img-file (str:concat (pathname-name captcha-txt-file) ".png"))
+         (captcha-md5-str (byte-array-to-hex-string
+                           (md5:md5sum-file captcha-txt-file))))
+    (list 201 '(:content-type "application/json")
+          (list (new-captcha-json (str:concat "/captcha/" captcha-img-file)
+                                  captcha-md5-str)))))
 
 
 (defun index-response ()
-  '(201 (:content-type "text/plain") ("You’ve installed Kaptĉapelo! Good work, guy!")))
+  '(201 (:content-type "text/plain") #p"kaptchapelo.lisp"))
+;;  '(201 (:content-type "text/plain") ("You’ve installed Kaptĉapelo! Good work, guy!")))
 
 
 (defun 404-response ()
   '(404 (:content-type "text/plain") ("No such page.")))
 
 
-(defun server (env)
+(defun server (env captcha-dir)
   (let* ((uri (quri:uri (getf env :request-uri)))
          (params (quri:uri-query-params uri)))
-
-    (format 't (quri:uri-path uri))
     (cond ((string= (quri:uri-path uri) "/new")
-           (new-captcha-response))
+           (new-captcha-response captcha-dir))
           ((or (string= (quri:uri-path uri) "/")
                (string= (quri:uri-path uri) "/index.html"))
            (index-response))
           ('t
-           (404-response))
-        ;; At any other path, give control back over to the user’s server
-        (or (and clack-app (funcall clack-app env))))))
+           (404-response)))))
 
 
-
-(defun start-server ()
+(defun start-server (&key (captcha-directory #p"captcha/"))
   (clack:clackup
    (lambda (env)
-     (funcall #'server env))))
+     (funcall #'server env captcha-directory))))
