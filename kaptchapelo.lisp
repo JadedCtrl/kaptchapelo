@@ -57,10 +57,13 @@
                                   captcha-md5-str)))))
 
 
-(defun index-response ()
-  '(201 (:content-type "text/plain") #p"kaptchapelo.lisp"))
-;;  '(201 (:content-type "text/plain") ("You’ve installed Kaptĉapelo! Good work, guy!")))
+(defun image-response (request-uri captcha-dir)
+  (let ((image-path (str:replace-first "/captcha/" (format nil "~A" captcha-dir) request-uri)))
+    (list 201 '(:content-type "image/png") (pathname image-path))))
 
+
+(defun index-response ()
+  '(201 (:content-type "text/plain") ("You’ve installed Kaptĉapelo! Good work, guy!")))
 
 (defun 404-response ()
   '(404 (:content-type "text/plain") ("No such page.")))
@@ -68,17 +71,24 @@
 
 (defun server (env captcha-dir)
   (let* ((uri (quri:uri (getf env :request-uri)))
+         (uri-path (quri:uri-path uri))
          (params (quri:uri-query-params uri)))
-    (cond ((string= (quri:uri-path uri) "/new")
+    (format *error-output* "~A" uri-path)
+    (cond ((string= uri-path "/new")
            (new-captcha-response captcha-dir))
-          ((or (string= (quri:uri-path uri) "/")
-               (string= (quri:uri-path uri) "/index.html"))
+          ((or (string= uri-path "/")
+               (string= uri-path "/index.html"))
            (index-response))
+          ((str:starts-with? "/captcha/" uri-path)
+;;                (str:ends-with? ".png" uri-path))
+           (image-response uri-path captcha-dir))
           ('t
            (404-response)))))
 
 
-(defun start-server (&key (captcha-directory #p"captcha/"))
+(defun start-server (&key (address "0.0.0.0") (port 5001) (captcha-directory #p"captcha/"))
   (clack:clackup
    (lambda (env)
-     (funcall #'server env captcha-directory))))
+     (funcall #'server env captcha-directory))
+   :address address
+   :port port))
