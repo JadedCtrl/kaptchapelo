@@ -7,4 +7,5 @@
   ;; Change captcha-directory’s path to your captchas
   :captcha-directory #p"~/.local/lib/quicklisp/local-projects/kaptchapelo/captcha/"
   :address "0.0.0.0"
-  :port 5001)
+  :port 5001
+  :background nil)

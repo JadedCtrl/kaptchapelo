@@ -100,7 +100,8 @@ make a Clack HTTP response that serves the appropriate image."
        (404-response)))))
 
 
-(defun start-server (&key (address "0.0.0.0") (port 5001) (captcha-directory #p"captcha/"))
+(defun start-server (&key (address "0.0.0.0") (port 5001) (background 't)
+                       (captcha-directory #p"captcha/"))
   "Start the Kaptchapelo server, which takes captcha challenges from the given
 CAPTCHA-DIRECTORY. Challenges are made up of two files:
   * A challenge PNG file (ex. bird.png)
@@ -110,4 +111,5 @@ Note that the The answer text-file should not contain a trailing newline."
    (lambda (env)
      (funcall #'server env captcha-directory))
    :address address
-   :port port))
+   :port port
+   :use-thread background))
