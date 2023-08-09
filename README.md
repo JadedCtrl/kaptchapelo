@@ -3,7 +3,7 @@ Kaptĉapelo is a simple [Kocaptcha](https://github.com/koto-bank/kocaptcha)-comp
 
 Since Kaptĉapelo is a kinda-sorta drop-in replacement for Kocaptcha, you can [use it as CAPTCHA](https://docs-develop.pleroma.social/backend/configuration/cheatsheet/#captcha) for your [Pleroma](https://pleroma.social) server.
 
-![A screenshot of a CAPTCHA challenge on the registration page of a Pleroma server. It is a picture of a feminine anime character, Ferris from Re:Zero, with the question in Esperanto: “Ĉu ĝi estas knabo aŭ knabino?”](example.png)
+![A screenshot of a CAPTCHA challenge on the registration page of a Pleroma server. It is a picture of a feminine anime character, Ferris from Re:Zero, with the question: “Are they a boy or a girl?”](example.png)
 
 
 ## Installation
