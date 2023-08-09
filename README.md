@@ -3,6 +3,7 @@ Kaptĉapelo is a simple [Kocaptcha](https://github.com/koto-bank/kocaptcha)-comp
 
 Since Kaptĉapelo is a kinda-sorta drop-in replacement for Kocaptcha, you can [use it as CAPTCHA](https://docs-develop.pleroma.social/backend/configuration/cheatsheet/#captcha) for your [Pleroma](https://pleroma.social) server.
 
+![A screenshot of a CAPTCHA challenge on the registration page of a Pleroma server. It is a picture of a feminine anime character, Ferris from Re:Zero, with the question in Esperanto: “Ĉu ĝi estas knabo aŭ knabino?”](example.png)
 
 
 ## Installation
@@ -52,7 +53,7 @@ Now, Kaptchapelo should be running and good to go; visit http://localhost:5001 a
 
 
 ## Configuration
-### Web-server
+### Reverse-proxy
 You’ll probably be running Kaptchapelo through a reverse proxy; here’s how you can add it to an existing server definition with [nginx](https://nginx.org/):
 
 ```
@@ -82,7 +83,7 @@ That is to say, you don’t need a dedicated subdomain!
 Making custom captchas is easy! A challenge is simply a PNG file (question) and a TXT file (answer).
 … that’s it! Literally.
 
-Note that the PNG and TXT files should have the same name (bird.png and bird.txt, not bird2.png and bird1.txt), and that the TXT answer should consist of one line with _no_ newline.
+Note that the PNG and TXT files should have the same name (`bird.png` and `bird.txt`, not `bird2.png` and `bird1.txt`), and that the TXT answer should consist of one line with _no_ newline.
 
 A peek through this repository’s example captchas (in `./captcha/`) should give you the idea.
 
@@ -100,5 +101,5 @@ In addition, you can also change the port and address by editing this script.
 
 
 ## Misc. information
-Author: Jaidyn Ann @jadedctrl@jam.xwx.moe  
+Author: Jaidyn Ann `@jadedctrl@jam.xwx.moe`  
 License: GNU AGPLv3
